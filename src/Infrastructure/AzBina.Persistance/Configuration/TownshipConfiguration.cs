@@ -1,31 +1,25 @@
 ﻿using AzBina.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AzBina.Persistance.Configuration
+namespace AzBina.Persistance.Configuration;
+
+public class TownshipConfiguration : IEntityTypeConfiguration<Township>
 {
-    public class TownshipConfiguration : IEntityTypeConfiguration<Township>
+    public void Configure(EntityTypeBuilder<Township> builder)
     {
-        public void Configure(EntityTypeBuilder<Township> builder)
-        {
-           
+       builder.HasKey(t => t.Id);
+
+        builder.Property(t => t.Name)
+              .IsRequired();
+
+            builder.HasIndex(t => t.Name)
+              .IsUnique();
+
+            builder.HasMany(t => t.Ads)
+            .WithOne(t => t.Town)
+            .HasForeignKey(a => a.TownId)
+            .OnDelete(DeleteBehavior.Restrict);
         
-                builder.Property(t => t.Name)
-                  .IsRequired();
-
-                builder.HasIndex(t => t.Name)
-                  .IsUnique();
-
-                builder.HasMany(t => t.Ads)
-                .WithOne(t => t.Town)
-                .HasForeignKey(a => a.TownId)
-                .OnDelete(DeleteBehavior.Restrict);
-            
-        }
     }
 }
