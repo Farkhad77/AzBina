@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class Image
+    public class Image:BaseEntity
     {
-        public int Id { get; set; }
-        public string ImageUrl { get; set; }
-        public int AdsId { get; set; }
-        public bool IsMain { get; set; }
+        public string Image_Url { get; set; }
+        public bool is_main { get; set; }
 
         public Ad Ad { get; set; }
+        public Guid AdId { get; set; }
     }
 
 }

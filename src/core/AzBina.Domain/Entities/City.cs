@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class City
+    public class City : BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-
+        public string Name { get; set; } = null!;
         public ICollection<District> Districts { get; set; }
         public ICollection<Ad> Ads { get; set; }
     }

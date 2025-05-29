@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class District
+    public class District : BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int CityId { get; set; }
-
-        public City City { get; set; }
-        public ICollection<Township> Townships { get; set; }
-        public ICollection<Ad> Ads { get; set; }
+        public string Name { get; set; } = null!;
+        public City City { get; set; } = null!;
+        public Guid CityId { get; set; }
+        public ICollection<Township> Towns { get; set; }
+        public ICollection<Ad> Ads
+        {
+            get; set;
+        }
     }
-
 }
