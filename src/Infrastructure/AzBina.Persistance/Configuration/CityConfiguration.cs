@@ -13,6 +13,7 @@ namespace AzBina.Persistance.Configuration
     {
         public void Configure(EntityTypeBuilder<City> builder)
         {
+            builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Name)
                 .IsRequired();

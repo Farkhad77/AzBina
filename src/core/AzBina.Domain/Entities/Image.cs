@@ -14,5 +14,4 @@ namespace AzBina.Domain.Entities
         public Ad Ad { get; set; }
         public Guid AdId { get; set; }
     }
-
 }
