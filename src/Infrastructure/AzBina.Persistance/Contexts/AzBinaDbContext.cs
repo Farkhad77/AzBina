@@ -7,12 +7,6 @@ public class AzBinaDbContext : DbContext
 {
     public AzBinaDbContext(DbContextOptions<AzBinaDbContext>options) : base(options)
     {
-
-    }
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AzBinaDbContext).Assembly);
-        base.OnModelCreating(modelBuilder);
     }
     public DbSet<Bio> Bios { get; set; }
     public DbSet<Ad> Ads{ get; set; }
@@ -23,5 +17,13 @@ public class AzBinaDbContext : DbContext
     public DbSet<Favorite> Favorites{ get; set; }
     public DbSet<Image> Images{ get; set; }
     public DbSet<Domain.Entities.Type> Types{ get; set; }
+
+
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AzBinaDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+    }
 }
 
