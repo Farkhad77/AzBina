@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class Bio
+    public class Bio : BaseEntity
     {
-        public int Id { get; set; }
         public string Key { get; set; }
         public string Value { get; set; }
     }

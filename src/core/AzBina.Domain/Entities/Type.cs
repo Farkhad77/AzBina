@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class Type
+    public class Type:BaseEntity
     {
-        public int Id { get; set; }
         public string Name { get; set; }
-        public string DependOn { get; set; }
 
-        public ICollection<Ad> Ads { get; set; }
+        public Guid DependOn { get; set; }
     }
 
 }

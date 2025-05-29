@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace AzBina.Domain.Entities
 {
-    public class Favorite
+    public class Favorite :BaseEntity
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
-        public int AdsId { get; set; }
-
-        public User User { get; set; }
         public Ad Ad { get; set; }
+        public Guid AdId { get; set; }
     }
 
 }
