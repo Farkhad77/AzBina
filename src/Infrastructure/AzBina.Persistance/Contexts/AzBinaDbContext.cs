@@ -14,6 +14,11 @@ namespace AzBina.Persistance.Contexts
         {
 
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AzBinaDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+        }
         public DbSet<Bio> Bios { get; set; }
         public DbSet<Ad> Ads{ get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -22,6 +27,7 @@ namespace AzBina.Persistance.Contexts
         public DbSet<Township> Townships{ get; set; }
         public DbSet<Favorite> Favorites{ get; set; }
         public DbSet<Image> Images{ get; set; }
+        public DbSet<Domain.Entities.Type> Types{ get; set; }
        
 
     }
