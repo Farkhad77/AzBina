@@ -8,9 +8,15 @@ namespace AzBina.Domain.Entities
 {
     public class Type:BaseEntity
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public Guid DependOn { get; set; }
+        public Guid ParentTypeId { get; set; }
+
+       
+        public Type? ParentType { get; set; }
+
+       
+        public ICollection<Type> SubTypes { get; set; } = new List<Type>();
     }
 
 }
