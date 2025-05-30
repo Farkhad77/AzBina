@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AzBina.Persistance.Migrations
 {
     [DbContext(typeof(AzBinaDbContext))]
-    [Migration("20250529211630_Initial")]
+    [Migration("20250530120502_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
