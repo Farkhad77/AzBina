@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AzBina.Persistance.Migrations
+namespace AzBina.WebAPI.Migrations
 {
     [DbContext(typeof(AzBinaDbContext))]
     partial class AzBinaDbContextModelSnapshot : ModelSnapshot
