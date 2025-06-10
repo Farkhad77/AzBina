@@ -21,8 +21,4 @@
     <ProjectReference Include="..\..\Infrastructure\AzBina.Persistance\AzBina.Persistance.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
