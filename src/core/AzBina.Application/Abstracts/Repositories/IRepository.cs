@@ -1,29 +1,23 @@
-﻿using AzBina.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
+using AzBina.Domain.Entities;
 
-namespace AzBina.Persistance.Repositories
+namespace AzBina.Persistance.Repositories;
+
+public interface IRepository<T> where T : BaseEntity , new()
 {
-    public interface IRepository<T> where T : BaseEntity , new()
-    {
-         Task<T?> GetByIdAsync(Guid id);
-        IQueryable<T> GetByFiltered(Expression<Func<T, bool>>? predicate = null,
-            Expression<Func<T, object>>[]? include = null,
-            bool isTracking= false);
-        IQueryable<T> GetAll(bool isTracking= false);
+     Task<T?> GetByIdAsync(Guid id);
+    IQueryable<T> GetByFiltered(Expression<Func<T, bool>>? predicate = null,
+        Expression<Func<T, object>>[]? include = null,
+        bool isTracking= false);
+    IQueryable<T> GetAll(bool isTracking= false);
 
-        IQueryable<T> GetAllFiltered(Expression<Func<T, bool>>? predicate= null ,
-            Expression<Func<T, object>>[]? include=null,
-            Expression<Func<T, bool>>? orderBy = null,
-            bool isOrderByAsc=true,
-            bool isTracking = false);
-        Task SaveChangeAsync();
-        Task AddAsync(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-    }
+    IQueryable<T> GetAllFiltered(Expression<Func<T, bool>>? predicate= null ,
+        Expression<Func<T, object>>[]? include=null,
+        Expression<Func<T, bool>>? orderBy = null,
+        bool isOrderByAsc=true,
+        bool isTracking = false);
+    Task SaveChangeAsync();
+    Task AddAsync(T entity);
+    void Update(T entity);
+    void Delete(T entity);
 }

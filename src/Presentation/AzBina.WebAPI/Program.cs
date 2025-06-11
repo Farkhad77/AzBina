@@ -1,5 +1,10 @@
+using AzBina.Application.Abstracts.Repositories;
+using AzBina.Application.Abstracts.Services;
 using AzBina.Persistance.Contexts;
+using AzBina.Persistance.Repositories;
+using AzBina.Persistance.Services;
 using Microsoft.EntityFrameworkCore;
+using AzBina.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,8 @@ builder.Services.AddDbContext<AzBinaDbContext>(options =>
 
 
 });
+
+builder.Services.RegisterService();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
