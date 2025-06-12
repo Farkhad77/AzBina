@@ -1,14 +1,15 @@
 using AzBina.Application.Abstracts.Repositories;
 using AzBina.Application.Abstracts.Services;
+using AzBina.Application.DTOs.CategoryDtos;
+using AzBina.Application.Validations;
+using AzBina.Persistance;
 using AzBina.Persistance.Contexts;
 using AzBina.Persistance.Repositories;
 using AzBina.Persistance.Services;
-using Microsoft.EntityFrameworkCore;
-using AzBina.Persistance;
+using AzBina.WebAPI.Middlewares;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using AzBina.Application.DTOs.CategoryDtos;
-using AzBina.Application.Validations;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -44,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

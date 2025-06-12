@@ -35,22 +35,21 @@ namespace AzBina.WebAPI.Controllers
 
         // POST api/<CategoriesController>
         [HttpPost]
-        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(BaseResponse<CategoryUpdateDto>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CategoryCreateDto dto)
         {
-            
-               var result =  await _categoryService.AddAsync(dto);
-            return StatusCode((int)result.StatusCode, result);
-            
-            
+                var result = await _categoryService.AddAsync(dto);
+                return StatusCode((int)result.StatusCode, result);  
         }
 
         // PUT api/<CategoriesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> Put(Guid id, [FromBody] CategoryUpdateDto dto)
         {
+            var result = await _categoryService.UpdateAsync(dto);
+            return StatusCode((int)result.StatusCode, result);
         }
 
         // DELETE api/<CategoriesController>/5

@@ -1,4 +1,5 @@
-﻿using AzBina.Application.Abstracts.Repositories;
+﻿using System.Net;
+using AzBina.Application.Abstracts.Repositories;
 using AzBina.Application.Abstracts.Services;
 using AzBina.Application.DTOs.CategoryDtos;
 using AzBina.Application.Shared;
@@ -51,8 +52,26 @@ public class CategoryService : ICategoryService
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(CategoryUpdateDto dto)
+    public async Task<BaseResponse<CategoryUpdateDto>> UpdateAsync(CategoryUpdateDto dto)
     {
-        throw new NotImplementedException();
+        var categoryDb = await  _categoryRepository.GetByIdAsync(dto.Id);
+        if (categoryDb is not null)
+        {
+            return new BaseResponse<CategoryUpdateDto>(HttpStatusCode.NotFound);
+        }
+
+        var existedCategory = await _categoryRepository
+            .GetByFiltered(c => c.Name.Trim().ToLower() == dto.Name.Trim().ToLower())
+            .FirstOrDefaultAsync();
+        if (existedCategory is not null)
+        {
+            return new BaseResponse<CategoryUpdateDto>("This category already exists", HttpStatusCode.BadRequest);
+        }
+        categoryDb.Name = dto.Name.Trim();
+
+
+
+        await _categoryRepository.SaveChangeAsync();
+        return new BaseResponse<CategoryUpdateDto>("Category updated successfully", dto, HttpStatusCode.OK);
     }
 }
