@@ -5,12 +5,21 @@ using AzBina.Persistance.Repositories;
 using AzBina.Persistance.Services;
 using Microsoft.EntityFrameworkCore;
 using AzBina.Persistance;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using AzBina.Application.DTOs.CategoryDtos;
+using AzBina.Application.Validations;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddValidatorsFromAssembly(typeof(CategoryCreateDtoValidator).Assembly);
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+
 
 builder.Services.AddDbContext<AzBinaDbContext>(options =>
 {

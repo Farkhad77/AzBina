@@ -1,8 +1,10 @@
 ﻿using AzBina.Application.Abstracts.Repositories;
 using AzBina.Application.Abstracts.Services;
+using AzBina.Application.Validations;
 using AzBina.Persistance.Repositories;
 using AzBina.Persistance.Services;
 using Microsoft.Extensions.DependencyInjection;
+using FluentValidation;
 
 namespace AzBina.Persistance;
 
@@ -17,5 +19,6 @@ public static class ServiceRegistration
         #region Services
         services.AddScoped<ICategoryService, CategoryService>();
         #endregion
+        
     }
 }
