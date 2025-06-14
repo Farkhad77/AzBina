@@ -9,11 +9,11 @@ namespace AzBina.Application.Shared;
 
 public class BaseResponse<T>
 {
-    public bool Success;
-    public string? Message;
+    public bool Success { get; set; }
+    public string? Message { get; set; }
     public T Data { get; set; }
-    public HttpStatusCode StatusCode;
-    
+    public HttpStatusCode StatusCode { get; set; }
+
 
     public BaseResponse(HttpStatusCode statusCode)
     {
