@@ -11,17 +11,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{65469B1C-3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{B7C18A87-0748-4D5D-A1F5-367F0508D38B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzBina.Application", "src\core\AzBina.Application\AzBina.Application.csproj", "{BA077760-5632-482F-B47D-15D65395599E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzBina.Application", "src\core\AzBina.Application\AzBina.Application.csproj", "{BA077760-5632-482F-B47D-15D65395599E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzBina.Domain", "src\Core\AzBina.Domain\AzBina.Domain.csproj", "{A2583101-7E40-4FE9-AB3A-49EC6E565581}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzBina.Domain", "src\Core\AzBina.Domain\AzBina.Domain.csproj", "{A2583101-7E40-4FE9-AB3A-49EC6E565581}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzBina.Infrasturcture", "src\Infrastructure\AzBina.Infrasturcture\AzBina.Infrasturcture.csproj", "{D5B25C7A-9F7F-4604-825E-CCDEC23BACDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzBina.Infrasturcture", "src\Infrastructure\AzBina.Infrasturcture\AzBina.Infrasturcture.csproj", "{D5B25C7A-9F7F-4604-825E-CCDEC23BACDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzBina.Persistance", "src\Infrastructure\AzBina.Persistance\AzBina.Persistance.csproj", "{F6303041-9D88-48C2-8C7B-C843EED4C552}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzBina.Persistance", "src\Infrastructure\AzBina.Persistance\AzBina.Persistance.csproj", "{F6303041-9D88-48C2-8C7B-C843EED4C552}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5AFEF238-758C-4BD2-B8BD-56B0158CF029}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzBina.WebAPI", "src\Presentation\AzBina.WebAPI\AzBina.WebAPI.csproj", "{FA1F72C2-E09E-41F5-8EE3-2F5AD4F7E532}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzBina.WebAPI", "src\Presentation\AzBina.WebAPI\AzBina.WebAPI.csproj", "{FA1F72C2-E09E-41F5-8EE3-2F5AD4F7E532}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
