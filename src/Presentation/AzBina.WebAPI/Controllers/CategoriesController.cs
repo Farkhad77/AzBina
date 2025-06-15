@@ -57,5 +57,11 @@ namespace AzBina.WebAPI.Controllers
         public void Delete(int id)
         {
         }
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string query)
+        {
+            var result = await _categoryService.GetByNameSearchAsync(query);
+            return Ok(result);
+        }
     }
 }

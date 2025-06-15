@@ -6,14 +6,18 @@ using AzBina.Application.Shared;
 using AzBina.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using AzBina.Domain.Entities;
+using AutoMapper;
 
 namespace AzBina.Persistance.Services;
 public class CategoryService : ICategoryService
 {
     private ICategoryRepository _categoryRepository { get; }
-    public CategoryService(ICategoryRepository categoryRepository)
+    private readonly IMapper _mapper; // AutoMapper istifadə olunur
+
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
+        _mapper = mapper;
     }
 
     public async Task<BaseResponse<string>> AddAsync(CategoryCreateDto dto)
@@ -123,5 +127,16 @@ public class CategoryService : ICategoryService
 
         await _categoryRepository.SaveChangeAsync();
         return new BaseResponse<CategoryUpdateDto>("Category updated successfully", dto, HttpStatusCode.OK);
+    }
+
+    public async Task<BaseResponse<List<CategoryGetDto>>> GetByNameSearchAsync(string namePart)
+    {
+        var categories = await _categoryRepository.GetByNameSearchAsync(namePart);
+        if (categories == null || !categories.Any())
+        {
+            return new BaseResponse<List<CategoryGetDto>>("No categories found with the given name part", HttpStatusCode.NotFound);
+        }
+            
+        return new BaseResponse<List<CategoryGetDto>>("Data", _mapper.Map<List<CategoryGetDto>>(categories), HttpStatusCode.OK);
     }
 }

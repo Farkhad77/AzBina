@@ -12,4 +12,5 @@ public interface ICategoryService
     Task<BaseResponse<CategoryGetDto>> GetByIdAsync(Guid id);
     Task<BaseResponse<CategoryGetDto>> GetByNameAsync(string search);
     Task<BaseResponse<List<CategoryGetDto>>> GetAllAsync();
+    Task<BaseResponse<List<CategoryGetDto>>> GetByNameSearchAsync(string namePart);
 }
