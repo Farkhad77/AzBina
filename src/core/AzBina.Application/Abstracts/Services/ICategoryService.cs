@@ -7,9 +7,10 @@ namespace AzBina.Application.Abstracts.Services;
 public interface ICategoryService
 {
     Task <BaseResponse<string>> AddAsync(CategoryCreateDto dto);
-    Task DeleteAsync(int id);
+    Task <BaseResponse<string>> DeleteAsync(Guid id);
     Task<BaseResponse<CategoryUpdateDto>> UpdateAsync(CategoryUpdateDto dto);
-    Task<CategoryGetDto> GetByIdAsync(int id);
-    Task<CategoryGetDto> GetByNameAsync(string search);
-    Task<List<CategoryGetDto>> GetAllAsync();
+    Task<BaseResponse<CategoryGetDto>> GetByIdAsync(Guid id);
+    Task<BaseResponse<CategoryGetDto>> GetByNameAsync(string search);
+    Task<BaseResponse<List<CategoryGetDto>>> GetAllAsync();
+    Task<BaseResponse<List<CategoryGetDto>>> GetByNameSearchAsync(string namePart);
 }

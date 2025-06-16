@@ -1,11 +1,6 @@
-using AzBina.Application.Abstracts.Repositories;
-using AzBina.Application.Abstracts.Services;
-using AzBina.Application.DTOs.CategoryDtos;
 using AzBina.Application.Validations;
 using AzBina.Persistance;
 using AzBina.Persistance.Contexts;
-using AzBina.Persistance.Repositories;
-using AzBina.Persistance.Services;
 using AzBina.WebAPI.Middlewares;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -20,6 +15,8 @@ builder.Services.AddValidatorsFromAssembly(typeof(CategoryCreateDtoValidator).As
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 
 builder.Services.AddDbContext<AzBinaDbContext>(options =>
@@ -46,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
