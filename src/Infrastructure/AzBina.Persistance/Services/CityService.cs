@@ -27,8 +27,8 @@ public class CityService : ICityService
     }
     public async Task<BaseResponse<string>> AddAsync(CityCreateDto dto)
     {
-        var categoryDb = await _cityRepository.GetByFiltered(c => c.Name.Trim().ToLower() == dto.Name.Trim().ToLower()).FirstOrDefaultAsync();
-        if (categoryDb is not null)
+        var cityDb = await _cityRepository.GetByFiltered(c => c.Name.Trim().ToLower() == dto.Name.Trim().ToLower()).FirstOrDefaultAsync();
+        if (cityDb is not null)
         {
             return new BaseResponse<string>("This city already exists", System.Net.HttpStatusCode.BadRequest);
         }
@@ -91,7 +91,7 @@ public class CityService : ICityService
     public async Task<BaseResponse<CityGetDto>> GetByNameAsync(string search)
     {
         var cities = _cityRepository.GetAll();
-        var dtoCity = new CategoryGetDto();
+        var dtoCity = new CityGetDto();
         foreach (var city in cities)
         {
             if (city.Name == search)
