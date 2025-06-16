@@ -1,10 +1,8 @@
-﻿using AzBina.Application.Abstracts.Services;
-using AzBina.Application.DTOs.CategoryDtos;
+﻿using System.Net;
+using AzBina.Application.Abstracts.Services;
 using AzBina.Application.DTOs.CityDtos;
 using AzBina.Application.Shared;
-using AzBina.Persistance.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,10 +19,8 @@ namespace AzBina.WebAPI.Controllers
             }
 
             private ICityService _cityService { get; }
-
-
             // GET: api/<CitiesController>
-            [HttpGet]
+        [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
@@ -46,9 +42,6 @@ namespace AzBina.WebAPI.Controllers
         {
             var result = await _cityService.AddAsync(dto);
             return StatusCode((int)result.StatusCode, result);
-        }
-        public void Post([FromBody] string value)
-        {
         }
 
         // PUT api/<CitiesController>/5
