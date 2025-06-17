@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\AzBina.Application\AzBina.Application.csproj" />
+    <ProjectReference Include="..\AzBina.Infrasturcture\AzBina.Infrasturcture.csproj" />
   </ItemGroup>
 
 </Project>
