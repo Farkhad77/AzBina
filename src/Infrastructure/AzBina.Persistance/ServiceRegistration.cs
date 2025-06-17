@@ -13,13 +13,14 @@ public static class ServiceRegistration
     public static void RegisterService(this IServiceCollection services)
     {
         #region Repositories
-        services.AddScoped<ICategoryRepository, CategoryRepository>();      
+        services.AddScoped<ICategoryRepository, CategoryRepository>();   
+        services.AddScoped<ICityRepository, CityRepository>();
         #endregion
-        
+
         #region Services
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IFileUpload, FileUploadService>();
-        services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<ICityService, CityService>();
         #endregion
 
     }
