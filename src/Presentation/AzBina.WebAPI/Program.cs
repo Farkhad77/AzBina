@@ -1,9 +1,11 @@
 using AzBina.Application.Validations;
+using AzBina.Domain.Entities;
 using AzBina.Persistance;
 using AzBina.Persistance.Contexts;
 using AzBina.WebAPI.Middlewares;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -25,6 +27,15 @@ builder.Services.AddDbContext<AzBinaDbContext>(options =>
 
 
 });
+
+builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+    options.Lockout.MaxFailedAccessAttempts = 3;
+})  
+    .AddEntityFrameworkStores<AzBinaDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.RegisterService();
 
