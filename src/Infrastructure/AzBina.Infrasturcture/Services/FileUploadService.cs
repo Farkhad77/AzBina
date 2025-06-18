@@ -19,14 +19,31 @@ public class FileUploadService : IFileUpload
     public async Task<string> UploadAsync(IFormFile file)
     {
         var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-        if(!Directory.Exists(uploadsFolder))
+        if (!Directory.Exists(uploadsFolder))
         {
             Directory.CreateDirectory(uploadsFolder);
         }
-        var fileName= Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+        var originalFileName = Path.GetFileNameWithoutExtension(file.FileName);
+        var extension = Path.GetExtension(file.FileName);
+        var fileName = originalFileName + extension;
         var filePath = Path.Combine(uploadsFolder, fileName);
+
+        int count = 1;
+        while (System.IO.File.Exists(filePath))
+        {
+            var tempFileName = $"{originalFileName}({count}){extension}";
+            filePath = Path.Combine(uploadsFolder, tempFileName);
+            fileName = tempFileName;
+            count++;
+        }
+
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
-        return $"/uploads/{fileName}"; 
+
+        return $"/uploads/{fileName}";
     }
 }
+
+
+
