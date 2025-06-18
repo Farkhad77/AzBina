@@ -1,9 +1,10 @@
 ﻿using AzBina.Domain.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AzBina.Persistance.Contexts;
 
-public class AzBinaDbContext : DbContext
+public class AzBinaDbContext : IdentityDbContext<AppUser>
 {
     public AzBinaDbContext(DbContextOptions<AzBinaDbContext>options) : base(options)
     {
