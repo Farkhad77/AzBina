@@ -15,12 +15,14 @@ public static class ServiceRegistration
         #region Repositories
         services.AddScoped<ICategoryRepository, CategoryRepository>();   
         services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<IDistrictRepository, DistrictRepository>();
         #endregion
 
         #region Services
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IFileUpload, FileUploadService>();
         services.AddScoped<ICityService, CityService>();
+        services.AddScoped<IDistrictService, DistrictService>();
         #endregion
 
     }
