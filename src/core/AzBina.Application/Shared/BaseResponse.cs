@@ -32,7 +32,7 @@ public class BaseResponse<T>
         Success = isSuccess;
         StatusCode = statusCode;
     }
-    public BaseResponse(string message, T data, HttpStatusCode statusCode)
+    public BaseResponse(string message, T? data, HttpStatusCode statusCode)
     {
         Success = true;
         Message = message;
