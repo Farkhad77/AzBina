@@ -23,6 +23,7 @@ public static class ServiceRegistration
         services.AddScoped<IFileUpload, FileUploadService>();
         services.AddScoped<ICityService, CityService>();
         services.AddScoped<IDistrictService, DistrictService>();
+        services.AddScoped<IUserService, UserService>();
         #endregion
 
     }
