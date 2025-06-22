@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AzBina.Application.Abstracts.Services;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,14 @@ namespace AzBina.WebAPI.Controllers;
 [ApiController]
 public class TownshipsController : ControllerBase
 {
+    private ITownshipService _townshipService { get; }
+    public TownshipsController(ITownshipService townshipService)
+    {
+        _townshipService = townshipService;
+    }
+
+
+
     // GET: api/<TownshipsController>
     [HttpGet]
     public IEnumerable<string> Get()
