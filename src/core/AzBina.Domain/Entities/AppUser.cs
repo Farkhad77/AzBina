@@ -4,5 +4,5 @@ namespace AzBina.Domain.Entities;
 
 public class AppUser : IdentityUser
 {
-    public string FullName { get; set; } = null!;
+    public string Fullname { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AzBina.Application.Abstracts.Services;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +9,14 @@ namespace AzBina.WebAPI.Controllers;
 [ApiController]
 public class FavoritesController : ControllerBase
 {
+    private IFavoriteService _favoriteService { get; }
+    public FavoritesController(IFavoriteService favoriteService)
+    {
+        _favoriteService = favoriteService;
+    }
+
+
+
     // GET: api/<FavoritesController>
     [HttpGet]
     public IEnumerable<string> Get()
