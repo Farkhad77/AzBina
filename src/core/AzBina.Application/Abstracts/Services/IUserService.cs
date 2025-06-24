@@ -12,4 +12,5 @@ public interface IUserService
 {
     Task <BaseResponse<string>> Register(UserRegisterDto dto);
     Task<BaseResponse<TokenResponse>> Login(UserLoginDto dto);
+    Task<BaseResponse<TokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
 }
