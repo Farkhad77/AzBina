@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AzBina.Application.Shared;
+
+public static class Permissions
+{
+    public static class Category
+    {
+        public const string Create = "Category.Create";
+        public const string Update = "Category.Update";
+        public const string Delete = "Category.Delete";
+      
+        public static List<string> All => new List<string>
+        {
+            Create,
+            Update,
+            Delete
+        };
+    }
+    public static class Role
+    {
+        public const string GetAllPermissions = "GetAllPermissions";
+
+
+
+        public static List<string> All => new List<string>
+        {
+            GetAllPermissions
+        };
+    }
+}

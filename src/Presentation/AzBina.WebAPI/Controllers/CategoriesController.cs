@@ -3,6 +3,7 @@ using AzBina.Application.Abstracts.Services;
 using AzBina.Application.DTOs.CategoryDtos;
 using AzBina.Application.Shared;
 using AzBina.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -23,6 +24,7 @@ public class CategoriesController : ControllerBase
 
     // POST api/<CategoriesController>
     [HttpPost]
+    [Authorize(Policy = Permissions.Category.Create)]
     [ProducesResponseType(typeof(BaseResponse<CategoryUpdateDto>), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.InternalServerError)]
