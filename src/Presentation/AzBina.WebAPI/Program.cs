@@ -1,3 +1,4 @@
+using AzBina.Application.Shared.Helpers;
 using AzBina.Application.Shared.Settings;
 using AzBina.Application.Validations;
 using AzBina.Domain.Entities;
@@ -43,6 +44,16 @@ builder.Services.RegisterService();
 
 builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JwtSettings"));
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JWTSettings>();
+builder.Services.AddAuthorization(options =>
+{
+    foreach (var permission in PermissionHelper.GetAllPermissionsList())
+    {
+       options.AddPolicy(permission, policy =>
+        {
+                      policy.RequireClaim("Permission", permission);
+        });
+    }
+});
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

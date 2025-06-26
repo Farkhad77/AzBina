@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\core\AzBina.Application\AzBina.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\AzBina.Infrasturcture\AzBina.Infrasturcture.csproj" />
     <ProjectReference Include="..\..\Infrastructure\AzBina.Persistance\AzBina.Persistance.csproj" />
   </ItemGroup>
