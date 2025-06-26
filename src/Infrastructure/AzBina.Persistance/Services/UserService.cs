@@ -23,11 +23,13 @@ public class UserService : IUserService
     private UserManager<AppUser> _userManager { get; }
     private SignInManager<AppUser> _signInManager { get; }
     private JWTSettings _jwtSettings { get; }
-    public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IOptions<JWTSettings> jwtSetting)
+    private RoleManager<IdentityRole> _roleManager { get; }
+    public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IOptions<JWTSettings> jwtSetting, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtSettings = jwtSetting.Value;
+        _roleManager = roleManager;
     }
     public async Task<BaseResponse<string>> Register(UserRegisterDto dto)
     {
@@ -82,12 +84,28 @@ public class UserService : IUserService
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email!),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-
         };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+            // Hər rol üçün permission-ları əlavə et
+            var identityRole = await _roleManager.FindByNameAsync(role);
+            if (identityRole != null)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(identityRole);
+                foreach (var claim in roleClaims.Where(c => c.Type == "Permission"))
+                {
+                    claims.Add(claim);
+                }
+            }
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
             {
