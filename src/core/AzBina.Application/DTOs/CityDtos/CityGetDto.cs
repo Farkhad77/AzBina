@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AzBina.Application.DTOs.CityDtos;
 
-public class CityGetDto
+public record class CityGetDto
 {
     public string Name { get; set; }
     public Guid Id { get; set; }

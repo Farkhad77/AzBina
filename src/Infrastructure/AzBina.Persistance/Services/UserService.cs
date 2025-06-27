@@ -141,6 +141,7 @@ public class UserService : IUserService
         return Convert.ToBase64String(randomNumber);
     }
 
+
     public async Task<BaseResponse<TokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
     {
         var principal = GetPrincipalFromExpiredToken(request.AccessToken);
@@ -160,7 +161,46 @@ public class UserService : IUserService
         return new("Token refreshed", newAccessToken, HttpStatusCode.OK);
     }
 
+    public async Task<BaseResponse<string>> AddRole(UserAddRoleDto dto)
+    {
+        
+            var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
+            if (user == null)
+            {
+                return new BaseResponse<string>("User not found.", HttpStatusCode.NotFound);
+            }
 
+            var roleNames = new List<string>();
+
+            foreach (var roleId in dto.RolesId.Distinct())
+            {
+                var role = await _roleManager.FindByIdAsync(roleId.ToString());
+                if (role == null)
+                {
+                    return new BaseResponse<string>($"Role with ID '{roleId}' not found.", HttpStatusCode.NotFound);
+                }
+                if (!await _userManager.IsInRoleAsync(user, role.Name!))
+                {
+                var result = await _userManager.AddToRoleAsync(user, role.Name!);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                    return new BaseResponse<string>($"Failed to add role '{role.Name}' to user: {errors}", HttpStatusCode.BadRequest);
+                }
+
+                roleNames.Add(role.Name!);
+            }
+
+
+     }
+
+              return new BaseResponse<string>(
+                $"Successfully added roles: {string.Join(", ", roleNames)} to user.",
+                    HttpStatusCode.OK);
+
+
+
+    }
     private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters

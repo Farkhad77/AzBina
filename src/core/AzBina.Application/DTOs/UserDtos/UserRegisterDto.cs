@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AzBina.Application.DTOs.UserDtos;
 
-public class UserRegisterDto
+public record class UserRegisterDto
 {
     public string Fullname { get; set; } = null!;
     public string Password { get; set; } = null!;

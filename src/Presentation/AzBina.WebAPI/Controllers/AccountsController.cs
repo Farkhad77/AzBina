@@ -65,6 +65,17 @@ namespace AzBina.WebAPI.Controllers
             return StatusCode((int)result.StatusCode, result);
         }
 
+
+        [HttpPost("assign-roles")]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> AddRole([FromBody] UserAddRoleDto dto)
+        {
+            var result = await _userService.AddRole(dto);
+            return StatusCode((int)result.StatusCode, result);
+        }
         // PUT api/<AccountsController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
