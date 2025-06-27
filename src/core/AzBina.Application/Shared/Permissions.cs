@@ -32,4 +32,15 @@ public static class Permissions
             GetAllPermissions
         };
     }
+    public static class Account
+    {
+        public const string AddRole = "AddRole";
+
+
+
+        public static List<string> All => new List<string>
+        {
+            AddRole
+        };
+    }
 }

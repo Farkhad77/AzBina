@@ -1,6 +1,6 @@
 ﻿namespace AzBina.Application.DTOs.CategoryDtos;
 
-public class CategoryUpdateDto
+public record class CategoryUpdateDto
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

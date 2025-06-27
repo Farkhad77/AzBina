@@ -54,6 +54,7 @@ public class CategoriesController : ControllerBase
 
     // DELETE api/<CategoriesController>/5
     [HttpDelete("{id}")]
+    [Authorize(Policy = Permissions.Category.Delete)]
     public void Delete(int id)
     {
     }
