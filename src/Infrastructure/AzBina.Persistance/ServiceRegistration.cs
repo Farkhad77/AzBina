@@ -5,6 +5,7 @@ using AzBina.Persistance.Repositories;
 using AzBina.Persistance.Services;
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
+using AzBina.Infrasturcture.Services;
 
 namespace AzBina.Persistance;
 
@@ -25,6 +26,7 @@ public static class ServiceRegistration
         services.AddScoped<IDistrictService, DistrictService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IEmailService, EmailService>();
         #endregion
 
     }

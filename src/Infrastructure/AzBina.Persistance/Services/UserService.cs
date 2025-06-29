@@ -13,6 +13,7 @@ using AzBina.Application.DTOs.UserDtos;
 using AzBina.Application.Shared;
 using AzBina.Application.Shared.Settings;
 using AzBina.Domain.Entities;
+using AzBina.Infrasturcture.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
@@ -23,15 +24,21 @@ namespace AzBina.Persistance.Services;
 public class UserService : IUserService
 {
     private UserManager<AppUser> _userManager { get; }
+    private IEmailService _mailService { get; }
     private SignInManager<AppUser> _signInManager { get; }
     private JWTSettings _jwtSettings { get; }
     private RoleManager<IdentityRole> _roleManager { get; }
-    public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IOptions<JWTSettings> jwtSetting, RoleManager<IdentityRole> roleManager)
+    public UserService(UserManager<AppUser> userManager, 
+        SignInManager<AppUser> signInManager, 
+        IOptions<JWTSettings> jwtSetting, 
+        RoleManager<IdentityRole> roleManager, 
+        IEmailService mailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtSettings = jwtSetting.Value;
         _roleManager = roleManager;
+        _mailService = mailService;
     }
     public async Task<BaseResponse<string>> Register(UserRegisterDto dto)
     {
@@ -59,6 +66,8 @@ public class UserService : IUserService
             return new(errorsMessage.ToString(), System.Net.HttpStatusCode.BadRequest);
         }
         string emailConfirmLink = await GetEmailConfirmLink(newUser);
+        await _mailService.SendEmailAsync(new List<string> { newUser.Email }, "Email Confirmation", 
+            $"Please confirm your email by clicking the link: {emailConfirmLink}");
 
         return new BaseResponse<string>("User registered successfully", System.Net.HttpStatusCode.Created);
         
@@ -71,6 +80,11 @@ public class UserService : IUserService
         if (existedEmail is null)
         {
             return new("Email or password is wrong.", null, System.Net.HttpStatusCode.NotFound);
+        }
+
+        if (!existedEmail.EmailConfirmed)
+        {
+            return new("Email is not confirmed.", null, System.Net.HttpStatusCode.BadRequest);
         }
 
         SignInResult signInResult = await _signInManager.PasswordSignInAsync(dto.Email, dto.Password, true, true);
@@ -102,7 +116,7 @@ public class UserService : IUserService
         var newAccessToken = await GenerateTokensAsync(user);
         return new("Token refreshed", newAccessToken, HttpStatusCode.OK);
     }
-    public async Task<BaseResponse<string>> ConfirmEmail(Guid userId,string token)
+    public async Task<BaseResponse<string>> ConfirmEmail(string userId,string token)
     {
         var existedUser = await _userManager.FindByIdAsync(userId.ToString());
         if (existedUser == null)
@@ -121,7 +135,7 @@ public class UserService : IUserService
     private async Task<string> GetEmailConfirmLink(AppUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var link = $"http://localhost:5038/api/Accounts/ConfirmEmail?userId={user.Id}&token={HttpUtility.UrlEncode(token)}";
+        var link = $"https://localhost:7096/api/Accounts/ConfirmEmail?userId={user.Id}&token={WebUtility.UrlEncode(token)}";
         Console.WriteLine(token);
         return link;
 

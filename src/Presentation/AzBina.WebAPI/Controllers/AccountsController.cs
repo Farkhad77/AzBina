@@ -66,7 +66,7 @@ namespace AzBina.WebAPI.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("confirm-email")]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
