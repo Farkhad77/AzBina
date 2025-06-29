@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AzBina.Application.DTOs.CityDtos;
 
-public class CityCreateDto
+public record class CityCreateDto
 {
     
     public string Name { get; set; } = null!; // City name cannot be null

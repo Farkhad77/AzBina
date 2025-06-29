@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AzBina.Application.DTOs.DistrictDtos;
 
-public class DistrictCreateDto
+public record class DistrictCreateDto
 {
     public string Name { get; set; }
 

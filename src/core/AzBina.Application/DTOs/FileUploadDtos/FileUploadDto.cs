@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AzBina.Application.DTOs.FileUploadDtos;
 
-public class FileUploadDto
+public record class FileUploadDto
 {
    public  IFormFile File { get; set; } = null!;
 }

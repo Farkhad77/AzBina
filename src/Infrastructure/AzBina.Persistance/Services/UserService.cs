@@ -7,12 +7,15 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AzBina.Application.Abstracts.Services;
 using AzBina.Application.DTOs.UserDtos;
 using AzBina.Application.Shared;
 using AzBina.Application.Shared.Settings;
 using AzBina.Domain.Entities;
+using AzBina.Infrasturcture.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,15 +24,21 @@ namespace AzBina.Persistance.Services;
 public class UserService : IUserService
 {
     private UserManager<AppUser> _userManager { get; }
+    private IEmailService _mailService { get; }
     private SignInManager<AppUser> _signInManager { get; }
     private JWTSettings _jwtSettings { get; }
     private RoleManager<IdentityRole> _roleManager { get; }
-    public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IOptions<JWTSettings> jwtSetting, RoleManager<IdentityRole> roleManager)
+    public UserService(UserManager<AppUser> userManager, 
+        SignInManager<AppUser> signInManager, 
+        IOptions<JWTSettings> jwtSetting, 
+        RoleManager<IdentityRole> roleManager, 
+        IEmailService mailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jwtSettings = jwtSetting.Value;
         _roleManager = roleManager;
+        _mailService = mailService;
     }
     public async Task<BaseResponse<string>> Register(UserRegisterDto dto)
     {
@@ -56,9 +65,14 @@ public class UserService : IUserService
             }
             return new(errorsMessage.ToString(), System.Net.HttpStatusCode.BadRequest);
         }
+        string emailConfirmLink = await GetEmailConfirmLink(newUser);
+        await _mailService.SendEmailAsync(new List<string> { newUser.Email }, "Email Confirmation", 
+            $"Please confirm your email by clicking the link: {emailConfirmLink}");
+
         return new BaseResponse<string>("User registered successfully", System.Net.HttpStatusCode.Created);
         
     }
+
 
     public async Task<BaseResponse<TokenResponse>> Login(UserLoginDto dto)
     {
@@ -66,6 +80,11 @@ public class UserService : IUserService
         if (existedEmail is null)
         {
             return new("Email or password is wrong.", null, System.Net.HttpStatusCode.NotFound);
+        }
+
+        if (!existedEmail.EmailConfirmed)
+        {
+            return new("Email is not confirmed.", null, System.Net.HttpStatusCode.BadRequest);
         }
 
         SignInResult signInResult = await _signInManager.PasswordSignInAsync(dto.Email, dto.Password, true, true);
@@ -77,68 +96,6 @@ public class UserService : IUserService
 
         var token = await GenerateTokensAsync(existedEmail);
         return new("Token generated", token, System.Net.HttpStatusCode.OK);
-    }
-
-    private async Task<TokenResponse> GenerateTokensAsync(AppUser user)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
-
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-        };
-
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-
-            // Hər rol üçün permission-ları əlavə et
-            var identityRole = await _roleManager.FindByNameAsync(role);
-            if (identityRole != null)
-            {
-                var roleClaims = await _roleManager.GetClaimsAsync(identityRole);
-                foreach (var claim in roleClaims.Where(c => c.Type == "Permission"))
-                {
-                    claims.Add(claim);
-                }
-            }
-        }
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-            {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
-            Issuer = _jwtSettings.Issuer,
-            Audience = _jwtSettings.Audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        var jwt = tokenHandler.WriteToken(token);
-
-        var refreshToken = GenerateRefreshToken();
-        var refreshTokenExpiryDate = DateTime.UtcNow.AddHours(2); // Refresh token valid for 7 days
-        user.RefreshToken = refreshToken;
-        user.ExpiryDate = refreshTokenExpiryDate;
-        await _userManager.UpdateAsync(user);
-
-        return new TokenResponse
-        {
-            Token = jwt,
-            RefreshToken = refreshToken,
-            ExpireDate = tokenDescriptor.Expires!.Value
-        };
-    }
-
-    private string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 
     public async Task<BaseResponse<TokenResponse>> RefreshTokenAsync(RefreshTokenRequest request)
@@ -159,8 +116,70 @@ public class UserService : IUserService
         var newAccessToken = await GenerateTokensAsync(user);
         return new("Token refreshed", newAccessToken, HttpStatusCode.OK);
     }
+    public async Task<BaseResponse<string>> ConfirmEmail(string userId,string token)
+    {
+        var existedUser = await _userManager.FindByIdAsync(userId.ToString());
+        if (existedUser == null)
+        {
+            return new BaseResponse<string>("Email confirmation failed.", HttpStatusCode.NotFound);
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(existedUser, token);
+        if (!result.Succeeded)
+        {
+            return new BaseResponse<string>("Email confirmation failed.", HttpStatusCode.BadRequest);
+        }
+
+        return new BaseResponse<string>("Email confirmed successfully.", HttpStatusCode.OK);
+    }
+    private async Task<string> GetEmailConfirmLink(AppUser user)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var link = $"https://localhost:7096/api/Accounts/ConfirmEmail?userId={user.Id}&token={WebUtility.UrlEncode(token)}";
+        Console.WriteLine(token);
+        return link;
+
+    }
+    public async Task<BaseResponse<string>> AddRole(UserAddRoleDto dto)
+    {
+        
+            var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
+            if (user == null)
+            {
+                return new BaseResponse<string>("User not found.", HttpStatusCode.NotFound);
+            }
+
+            var roleNames = new List<string>();
+
+            foreach (var roleId in dto.RolesId.Distinct())
+            {
+                var role = await _roleManager.FindByIdAsync(roleId.ToString());
+                if (role == null)
+                {
+                    return new BaseResponse<string>($"Role with ID '{roleId}' not found.", HttpStatusCode.NotFound);
+                }
+                if (!await _userManager.IsInRoleAsync(user, role.Name!))
+                {
+                var result = await _userManager.AddToRoleAsync(user, role.Name!);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+                    return new BaseResponse<string>($"Failed to add role '{role.Name}' to user: {errors}", HttpStatusCode.BadRequest);
+                }
+
+                roleNames.Add(role.Name!);
+            }
 
 
+     }
+
+              return new BaseResponse<string>(
+                $"Successfully added roles: {string.Join(", ", roleNames)} to user.",
+                    HttpStatusCode.OK);
+
+
+
+    }
     private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -190,5 +209,64 @@ public class UserService : IUserService
             return null;
         }
     }
+    private string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
+    }
+    private async Task<TokenResponse> GenerateTokensAsync(AppUser user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
 
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Email, user.Email!),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+        };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+            // Hər rol üçün permission-ları əlavə et
+            var identityRole = await _roleManager.FindByNameAsync(role);
+            if (identityRole != null)
+            {
+                var roleClaims = await _roleManager.GetClaimsAsync(identityRole);
+                foreach (var claim in roleClaims.Where(c => c.Type == "Permission"))
+                {
+                    claims.Add(claim);
+                }
+            }
+        }
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var jwt = tokenHandler.WriteToken(token);
+
+        var refreshToken = GenerateRefreshToken();
+        var refreshTokenExpiryDate = DateTime.UtcNow.AddHours(2); // Refresh token valid for 7 days
+        user.RefreshToken = refreshToken;
+        user.ExpiryDate = refreshTokenExpiryDate;
+        await _userManager.UpdateAsync(user);
+
+        return new TokenResponse
+        {
+            Token = jwt,
+            RefreshToken = refreshToken,
+            ExpireDate = tokenDescriptor.Expires!.Value
+        };
+    }
 }
