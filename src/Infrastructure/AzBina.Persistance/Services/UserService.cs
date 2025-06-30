@@ -118,8 +118,8 @@ public class UserService : IUserService
     }
     public async Task<BaseResponse<string>> ConfirmEmail(string userId,string token)
     {
-        var existedUser = await _userManager.FindByIdAsync(userId.ToString());
-        if (existedUser == null)
+        var existedUser = await _userManager.FindByIdAsync(userId);
+        if (existedUser is null)
         {
             return new BaseResponse<string>("Email confirmation failed.", HttpStatusCode.NotFound);
         }
@@ -135,7 +135,7 @@ public class UserService : IUserService
     private async Task<string> GetEmailConfirmLink(AppUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var link = $"https://localhost:7096/api/Accounts/ConfirmEmail?userId={user.Id}&token={WebUtility.UrlEncode(token)}";
+        var link = $"https://localhost:7096/api/Accounts/ConfirmEmail?userId={user.Id}&token={HttpUtility.UrlEncode(token)}";
         Console.WriteLine(token);
         return link;
 
@@ -269,4 +269,43 @@ public class UserService : IUserService
             ExpireDate = tokenDescriptor.Expires!.Value
         };
     }
+
+    // Şifrə sıfırlama üçün token yarat və email göndər
+    public async Task<BaseResponse<string>> SendResetPasswordEmailAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return new BaseResponse<string>("User not found", HttpStatusCode.NotFound);
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = WebUtility.UrlEncode(token);
+
+        var resetLink = $"https://localhost:7096/api/Accounts/ResetPassword?email={email}&token={encodedToken}";
+
+        await _mailService.SendEmailAsync(
+            new List<string> { email },
+            "Password Reset",
+            $"Please reset your password by clicking {resetLink}");
+
+        return new BaseResponse<string>("Password reset link has been sent to your email.", HttpStatusCode.OK);
+    }
+
+    public async Task<BaseResponse<string>> ResetPasswordAsync(ResetPasswordDto dto)
+    {
+        var user = await _userManager.FindByEmailAsync(dto.Email);
+        if (user == null)
+            return new BaseResponse<string>("User not found", HttpStatusCode.NotFound);
+
+        var decodedToken = WebUtility.UrlDecode(dto.Token);
+        var result = await _userManager.ResetPasswordAsync(user, decodedToken, dto.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            return new BaseResponse<string>(errors, HttpStatusCode.BadRequest);
+        }
+
+        return new BaseResponse<string>("Password has been reset successfully.", HttpStatusCode.OK);
+    }
+
 }
