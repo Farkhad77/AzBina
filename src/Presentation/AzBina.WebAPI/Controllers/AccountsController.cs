@@ -66,7 +66,7 @@ namespace AzBina.WebAPI.Controllers
         }
 
 
-        [HttpGet("confirm-email")]
+        [HttpGet]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
@@ -87,6 +87,34 @@ namespace AzBina.WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SendResetPasswordEmail([FromBody] string email)
+        {
+            var result = await _userService.SendResetPasswordEmailAsync(email);
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return StatusCode((int)result.StatusCode, result);
+            }
+            return Ok(result.Message);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(BaseResponse<string>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            var result = await _userService.ResetPasswordAsync(dto);
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                return StatusCode((int)result.StatusCode, result);
+            }
+            return Ok(result.Message);
         }
     }
 }
